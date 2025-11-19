@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-gray-900 text-white">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VAW Escape Room Challenge</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6">
+
+  <!-- =============================== -->
+  <!-- LANDING PAGE -->
+  <!-- =============================== -->
+  <section id="landing" class="max-w-xl text-center space-y-6">
+    <h1 class="text-4xl font-extrabold">BREAK THE SILENCE: VAW ESCAPE ROOM CHALLENGE</h1>
+    <p class="text-gray-300">
+      Welcome to the Break the Silence: VAW Escape Room Challenge, an advocacy-based puzzle adventure.
+      You will solve riddles, decode ciphers, and unlock rooms to help “Luna” escape abuse.
+    </p>
+    <p class="text-red-400 font-bold">
+      ⚠️ Trigger Warning: This activity references sensitive content related to VAW.
+    </p>
+    <button onclick="nextSection('landing','room1')" 
+      class="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-lg font-semibold">
+      Next
+    </button>
+  </section>
+
+  <!-- =============================== -->
+  <!-- ROOM 1 — The Coded Journal -->
+  <!-- =============================== -->
+  <section id="room1" class="hidden max-w-3xl space-y-8">
+    <h2 class="text-3xl font-bold">ROOM 1 — The Coded Journal</h2>
+    <p class="text-gray-300">
+      You found Luna’s notebook. Some phrases are normal… but others are encrypted.
+      Decode the secret message to understand what she is trying to hide.
+    </p>
+
+    <div class="bg-gray-800 p-6 rounded-lg space-y-2">
+      <h3 class="text-xl font-semibold">Cipher Clue</h3>
+      <p class="text-yellow-300 font-mono">
+        8 5 3 8 5 3 11 19 13 25 16 8 15 14 5 5 22 5 18 25 5 22 5 14 9 14 7<br>
+        25 15 21 1 18 5 1 6 15 15 12 6 15 18 20 8 5 6 18 9 5 14 4 19 25 15 21 11 5 5 16<br>
+        5 22 5 18 25 13 15 22 5 25 15 21 13 1 11 5 8 5 20 18 1 3 11 19<br>
+        : 20 15 19 15 12 22 5 20 8 9 19 25 15 21 13 21 19 20 21 14 4 5 18 19 20 1 14 4 4 1 14 7 5
+      </p>
+    </div>
+
+    <div>
+      <h3 class="text-xl font-semibold mb-2">Which red flags are revealed?</h3>
+      <div class="space-y-2">
+        <label class="flex items-center gap-2"><input type="checkbox" class="checkbox" value="phone"> Monitoring her phone</label>
+        <label class="flex items-center gap-2"><input type="checkbox" class="checkbox" value="isolation"> Isolation from friends</label>
+        <label class="flex items-center gap-2"><input type="checkbox" class="checkbox" value="control"> Controlling behaviors</label>
+        <label class="flex items-center gap-2"><input type="checkbox" class="checkbox" value="love"> Loving encouragement</label>
+        <label class="flex items-center gap-2"><input type="checkbox" class="checkbox" value="unsafe"> Making her feel unsafe</label>
+      </div>
+      <button onclick="checkRoom1()" class="mt-4 px-5 py-2 bg-green-600 hover:bg-green-700 rounded-lg font-semibold">Submit Answers</button>
+      <p id="room1Result" class="mt-3 font-semibold"></p>
+    </div>
+
+    <div id="room1Unlock" class="hidden">
+      <h3 class="text-xl font-semibold mt-6">Enter the Unlock Code</h3>
+      <p class="text-gray-400">(Hint: What you should always be when danger is near?)</p>
+      <input id="room1Code" class="mt-3 w-full p-3 rounded-lg text-black" placeholder="Enter code">
+      <button onclick="checkRoom1Code()" class="mt-3 px-5 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold">Unlock Room</button>
+      <p id="room1CodeResult" class="mt-3 font-semibold"></p>
+    </div>
+  </section>
+
+  <!-- =============================== -->
+  <!-- ROOM 2 — The Torn Legal Scroll -->
+  <!-- =============================== -->
+  <section id="room2" class="hidden max-w-3xl space-y-8">
+    <h2 class="text-3xl font-bold">ROOM 2 — The Torn Legal Scroll</h2>
+    <p class="text-gray-300">You found three torn paper strips in Luna’s bag. Each describes a situation she faced, scrambled with a Substitution Cipher. Match each scenario to the correct law.</p>
+
+    <table class="table-auto w-full text-black bg-white rounded-lg">
+      <thead class="bg-gray-200">
+        <tr>
+          <th class="px-4 py-2">Torn Paper</th>
+          <th class="px-4 py-2">RA 9262</th>
+          <th class="px-4 py-2">Safe Spaces Act</th>
+          <th class="px-4 py-2">Anti-Trafficking</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="border px-4 py-2">A: I control her finances — I deny access to freedom.</td>
+          <td class="border px-4 py-2 text-center"><input type="radio" name="paperA" value="RA9262"></td>
+          <td class="border px-4 py-2 text-center"><input type="radio" name="paperA" value="SafeSpaces"></td>
+          <td class="border px-4 py-2 text-center"><input type="radio" name="paperA" value="Trafficking"></td>
+        </tr>
+        <tr>
+          <td class="border px-4 py-2">B: It’s the harassment and the looks.</td>
+          <td class="border px-4 py-2 text-center"><input type="radio" name="paperB" value="RA9262"></td>
+          <td class="border px-4 py-2 text-center"><input type="radio" name="paperB" value="SafeSpaces"></td>
+          <td class="border px-4 py-2 text-center"><input type="radio" name="paperB" value="Trafficking"></td>
+        </tr>
+        <tr>
+          <td class="border px-4 py-2">C: This is Trafficking in Persons.</td>
+          <td class="border px-4 py-2 text-center"><input type="radio" name="paperC" value="RA9262"></td>
+          <td class="border px-4 py-2 text-center"><input type="radio" name="paperC" value="SafeSpaces"></td>
+          <td class="border px-4 py-2 text-center"><input type="radio" name="paperC" value="Trafficking"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <button onclick="checkRoom2()" class="mt-4 px-5 py-2 bg-green-600 hover:bg-green-700 rounded-lg font-semibold">Submit Answers</button>
+    <p id="room2Result" class="mt-3 font-semibold"></p>
+
+    <div id="room2Unlock" class="hidden">
+      <h3 class="text-xl font-semibold mt-6">Enter Unlock Code</h3>
+      <p class="text-gray-400">(Hint: Type the 4-letter acronym combining the laws)</p>
+      <input id="room2Code" class="mt-3 w-full p-3 rounded-lg text-black" placeholder="Enter code">
+      <button onclick="checkRoom2Code()" class="mt-3 px-5 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold">Unlock Room</button>
+      <p id="room2CodeResult" class="mt-3 font-semibold"></p>
+    </div>
+  </section>
+
+  <!-- =============================== -->
+  <!-- ROOM 3 — Glitching Messages -->
+  <!-- =============================== -->
+  <section id="room3" class="hidden max-w-3xl space-y-8">
+    <h2 class="text-3xl font-bold">ROOM 3 — The Glitching Messages</h2>
+    <p class="text-gray-300">Luna’s phone glitches. Only three messages are dangerous. Hidden inside them is a ciphered clue. Identify the harassing messages and find the hidden 4-letter word.</p>
+
+    <div class="bg-gray-800 p-4 rounded-lg space-y-2 text-yellow-300 font-mono">
+      <p>1: "P**T Turn around."</p>
+      <p>2: "You look 'b*tt*r' if you cover up 😉"</p>
+      <p>3: "*Unsolicited explicit ¥$oto*"</p>
+      <p>4: "Good morning, Lun$!"</p>
+    </div>
+
+    <input id="room3Code" class="mt-3 w-full p-3 rounded-lg text-black" placeholder="Enter 4-letter hidden word">
+    <button onclick="checkRoom3Code()" class="mt-3 px-5 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold">Unlock Room</button>
+    <p id="room3Result" class="mt-3 font-semibold"></p>
+  </section>
+
+  <!-- =============================== -->
+  <!-- ROOM 4 — Scrambled Map -->
+  <!-- =============================== -->
+  <section id="room4" class="hidden max-w-3xl space-y-8">
+    <h2 class="text-3xl font-bold">ROOM 4 — The Scrambled Map</h2>
+    <p class="text-gray-300">Luna drew a map showing the steps she must take to get help. Reorder the steps in the correct order:</p>
+
+    <ol class="list-decimal list-inside space-y-2">
+      <li>
+        <select id="step1" class="rounded-lg p-2 text-black w-full">
+          <option value="">Select</option>
+          <option value="VAWDesk">Barangay VAW Desk</option>
+          <option value="ProtectionOrder">Barangay Protection Order</option>
+          <option value="WCPD">WCPD Documentation</option>
+          <option value="SocialWorker">Social Worker</option>
+        </select>
+      </li>
+      <li>
+        <select id="step2" class="rounded-lg p-2 text-black w-full">
+          <option value="">Select</option>
+          <option value="VAWDesk">Barangay VAW Desk</option>
+          <option value="ProtectionOrder">Barangay Protection Order</option>
+          <option value="WCPD">WCPD Documentation</option>
+          <option value="SocialWorker">Social Worker</option>
+        </select>
+      </li>
+      <li>
+        <select id="step3" class="rounded-lg p-2 text-black w-full">
+          <option value="">Select</option>
+          <option value="VAWDesk">Barangay VAW Desk</option>
+          <option value="ProtectionOrder">Barangay Protection Order</option>
+          <option value="WCPD">WCPD Documentation</option>
+          <option value="SocialWorker">Social Worker</option>
+        </select>
+      </li>
+      <li>
+        <select id="step4" class="rounded-lg p-2 text-black w-full">
+          <option value="">Select</option>
+          <option value="VAWDesk">Barangay VAW Desk</option>
+          <option value="ProtectionOrder">Barangay Protection Order</option>
+          <option value="WCPD">WCPD Documentation</option>
+          <option value="SocialWorker">Social Worker</option>
+        </select>
+      </li>
+    </ol>
+
+    <input id="room4Code" class="mt-3 w-full p-3 rounded-lg text-black" placeholder="Enter Hotline Number">
+    <button onclick="checkRoom4Code()" class="mt-3 px-5 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold">Unlock Final Room</button>
+    <p id="room4Result" class="mt-3 font-semibold"></p>
+  </section>
+
+  <!-- =============================== -->
+  <!-- FINAL ROOM — Break the Silence -->
+  <!-- =============================== -->
+  <section id="final" class="hidden max-w-3xl space-y-6 text-center">
+    <h2 class="text-3xl font-bold">FINAL ROOM — Break the Silence</h2>
+    <p class="text-gray-300">You solved every cipher and uncovered the truth. Because of your choices, Luna finds a safe path forward. Thank you for participating in the Break the Silence: VAW Escape Room Challenge.</p>
+
+    <h3 class="text-xl font-semibold mt-4">Optional Reflection</h3>
+    <textarea placeholder="What is one way you can help end VAW in your community?" class="w-full p-4 rounded-lg text-black" rows="4"></textarea>
+  </section>
+
+  <script src="main.js"></script>
+</body>
+</html>
