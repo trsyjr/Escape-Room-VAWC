@@ -147,7 +147,7 @@ document.getElementById('room2-step2-submit').addEventListener('click', () => {
     return;
   }
   incProgress();
-  showPage('room3-step1');
+  showPage('room3');
 });
 
 // ---------------- ROOM 3 (combined) ----------------
