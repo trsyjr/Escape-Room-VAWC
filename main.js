@@ -3,7 +3,7 @@ const PAGES = [
   'start',
   'room1-step1','room1-step2',
   'room2-step1','room2-step2',
-  'room3-step1','room3-step2',
+  'room3',
   'room4-step1','room4-step2',
   'final','fail'
 ];
@@ -150,26 +150,27 @@ document.getElementById('room2-step2-submit').addEventListener('click', () => {
   showPage('room3-step1');
 });
 
-// ---------------- ROOM 3 ----------------
-document.getElementById('room3-step1-submit').addEventListener('click', () => {
+// ---------------- ROOM 3 (combined) ----------------
+document.getElementById('room3-submit').addEventListener('click', () => {
   const sel = [...document.querySelectorAll('.r3:checked')].map(i => i.value);
-  const needed = ['1','2','3'];
-  const ok = needed.every(n => sel.includes(n)) && sel.length === 3;
-  if (!ok) {
-    showError('room3-step1', 'Incorrect messages selected! Try again.');
-    return;
-  }
-  incProgress();
-  showPage('room3-step2');
-});
+  const needed = ['1','2','3']; // correct messages
+  const allSelectedCorrect = needed.every(n => sel.includes(n)) && sel.length === 3;
 
-document.getElementById('room3-step2-submit').addEventListener('click', () => {
-  const v = (document.getElementById('r3code').value || '').trim().toUpperCase();
-  if (v !== 'SAFE') {
-    showError('room3-step2', 'Incorrect code! Try again.');
+  const code = (document.getElementById('r3code').value || '').trim().toUpperCase();
+  const correctCode = 'SAFE';
+
+  if (!allSelectedCorrect) {
+    showError('room3', 'Incorrect messages selected! Try again.');
     return;
   }
-  incProgress();
+  if (code !== correctCode) {
+    showError('room3', 'Incorrect code! Try again.');
+    return;
+  }
+
+  // If both correct
+  incProgress(); // Step for message selection
+  incProgress(); // Step for code
   showPage('room4-step1');
 });
 
@@ -217,6 +218,27 @@ document.getElementById('finishBtn').addEventListener('click', async () => {
   const spentSeconds = Math.max(0, Math.round((timerEnd - Date.now())/1000));
   const duration = `${Math.floor((15*60-spentSeconds)/60)}m ${(15*60-spentSeconds)%60}s`;
 
+  // --- EmailJS send ---
+  try {
+    await emailjs.send(
+      'service_mqqndw9',      // replace with your service ID
+      'template_pzaou61',     // replace with your template ID
+      {
+        player_name: name,
+        player_division: division,
+        player_email: email,
+        reflection: reflection,
+        duration: duration,
+        finished_at: finishTime
+      },
+      '4uCGVPBz3H1dGhGwQ'       // replace with your EmailJS public key
+    );
+    console.log('Email sent successfully!');
+  } catch(err) {
+    console.error('Email failed:', err);
+  }
+
+  // --- Show final message ---
   document.querySelectorAll('[data-page]').forEach(s => s.classList.add('hidden'));
   const finalEl = document.querySelector('[data-page="final"]');
   finalEl.classList.remove('hidden');
