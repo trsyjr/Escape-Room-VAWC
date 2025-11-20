@@ -18,9 +18,10 @@ function showPage(name) {
   document.querySelectorAll('[data-page]').forEach(s => s.classList.add('hidden'));
   const el = document.querySelector(`[data-page="${name}"]`);
   if (el) el.classList.remove('hidden');
-  // update currentIndex
   currentIndex = PAGES.indexOf(name);
 }
+
+// increment progress bar
 function incProgress() {
   completedSteps = Math.min(TOTAL_STEPS, completedSteps + 1);
   const pct = Math.round((completedSteps / TOTAL_STEPS) * 100);
@@ -29,10 +30,9 @@ function incProgress() {
 }
 
 // Timer
-let timeLeft = 15 * 60; // seconds
+let timerEnd = null;
 const timerEl = document.getElementById('timer');
-timerEl.textContent = formatTime(timeLeft);
-let timerInterval = null;
+timerEl.textContent = "15:00";
 
 function formatTime(sec) {
   const m = Math.floor(sec / 60).toString().padStart(2,'0');
@@ -41,46 +41,46 @@ function formatTime(sec) {
 }
 
 function startTimer() {
-  if (timerInterval) return;
-  timerInterval = setInterval(() => {
-    timeLeft--;
-    timerEl.textContent = formatTime(timeLeft);
-    if (timeLeft <= 0) {
-      clearInterval(timerInterval);
+  if (timerEnd) return; // already started
+  timerEnd = Date.now() + 15 * 60 * 1000;
+
+  const tick = () => {
+    const remaining = Math.round((timerEnd - Date.now()) / 1000);
+    if (remaining <= 0) {
+      timerEl.textContent = "00:00";
       failGame();
+      return;
     }
-  }, 1000);
+    timerEl.textContent = formatTime(remaining);
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
 }
 
-// Try to close or redirect (browsers may block window.close)
-function attemptClose() {
-  try {
-    window.open('', '_self').close();
-    window.close();
-  } catch (e) {
-    try { location.href = 'about:blank'; } catch {}
-  }
+// Show inline error message
+function showError(containerId, message) {
+  const el = document.getElementById(containerId + '-error');
+  if (!el) return;
+  el.textContent = message;
+  el.classList.remove('hidden');
+  setTimeout(() => el.classList.add('hidden'), 3000);
 }
 
-// Failure (time up or wrong answer)
+// Fail game when time runs out
 function failGame() {
-  // lock UI and show fail page
   document.querySelectorAll('[data-page]').forEach(s => s.classList.add('hidden'));
   document.querySelector('[data-page="fail"]').classList.remove('hidden');
-  // attempt to close tab
-  setTimeout(() => attemptClose(), 700);
 }
 
-/* ---------------- START PAGE ---------------- */
+// ---------------- START ----------------
 document.getElementById('startBtn').addEventListener('click', () => {
   const name = document.getElementById('playerName').value.trim();
   const division = document.getElementById('playerDivision').value.trim();
   const email = document.getElementById('playerEmail').value.trim();
   if (!name || !division || !email) {
-    alert('Please enter your Name, Division and Email before starting.');
+    showError('start', 'Please enter Name, Division, and Email.');
     return;
   }
-  // store basic info in session variables
   sessionStorage.setItem('playerName', name);
   sessionStorage.setItem('playerDivision', division);
   sessionStorage.setItem('playerEmail', email);
@@ -89,8 +89,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
   startTimer();
 });
 
-/* ---------------- ROOM 1 ---------------- */
-// Page 1: checkbox selection
+// ---------------- ROOM 1 ----------------
 document.getElementById('room1-step1-submit').addEventListener('click', () => {
   const chosen = [...document.querySelectorAll('#r1choices input:checked')].map(i => i.value);
   const required = [
@@ -101,45 +100,32 @@ document.getElementById('room1-step1-submit').addEventListener('click', () => {
   ];
   const allIncluded = required.every(r => chosen.includes(r));
   if (!allIncluded) {
-    // wrong -> fail immediately
-    failGame();
+    showError('room1-step1', 'Incorrect selection! Try again.');
     return;
   }
   incProgress();
   showPage('room1-step2');
 });
 
-// Page 2: short answer code ALERT
 document.getElementById('room1-step2-submit').addEventListener('click', () => {
   const v = (document.getElementById('r1code').value || '').trim().toUpperCase();
-  if (v !== 'ALERT') { failGame(); return; }
+  if (v !== 'ALERT') {
+    showError('room1-step2', 'Incorrect code! Try again.');
+    return;
+  }
   incProgress();
   showPage('room2-step1');
 });
 
-/* ---------------- ROOM 2 ---------------- */
-// match buttons logic: we store selections in an object
+// ---------------- ROOM 2 ----------------
 const matchSelections = { A: null, B: null, C: null };
-document.querySelectorAll('.btn-group[data-for="A"] .btn-choice').forEach(btn => {
-  btn.addEventListener('click', () => {
-    matchSelections.A = btn.dataset.val;
-    // visual
-    document.querySelectorAll('.btn-group[data-for="A"] .btn-choice').forEach(x=>x.classList.remove('active'));
-    btn.classList.add('active');
-  });
-});
-document.querySelectorAll('.btn-group[data-for="B"] .btn-choice').forEach(btn => {
-  btn.addEventListener('click', () => {
-    matchSelections.B = btn.dataset.val;
-    document.querySelectorAll('.btn-group[data-for="B"] .btn-choice').forEach(x=>x.classList.remove('active'));
-    btn.classList.add('active');
-  });
-});
-document.querySelectorAll('.btn-group[data-for="C"] .btn-choice').forEach(btn => {
-  btn.addEventListener('click', () => {
-    matchSelections.C = btn.dataset.val;
-    document.querySelectorAll('.btn-group[data-for="C"] .btn-choice').forEach(x=>x.classList.remove('active'));
-    btn.classList.add('active');
+['A','B','C'].forEach(key => {
+  document.querySelectorAll(`.btn-group[data-for="${key}"] .btn-choice`).forEach(btn => {
+    btn.addEventListener('click', () => {
+      matchSelections[key] = btn.dataset.val;
+      document.querySelectorAll(`.btn-group[data-for="${key}"] .btn-choice`).forEach(x=>x.classList.remove('active'));
+      btn.classList.add('active');
+    });
   });
 });
 
@@ -150,66 +136,52 @@ document.getElementById('room2-step1-submit').addEventListener('click', () => {
     incProgress();
     showPage('room2-step2');
   } else {
-    failGame();
+    showError('room2-step1', 'Incorrect match! Try again.');
   }
 });
 
-// room2 code
 document.getElementById('room2-step2-submit').addEventListener('click', () => {
   const v = (document.getElementById('r2code').value || '').trim().toUpperCase();
-  if (v !== 'VAWC') { failGame(); return; }
+  if (v !== 'VAWC') {
+    showError('room2-step2', 'Incorrect code! Try again.');
+    return;
+  }
   incProgress();
   showPage('room3-step1');
 });
 
-/* ---------------- ROOM 3 ---------------- */
-// page1: select harassing messages (should be 1,2,3)
+// ---------------- ROOM 3 ----------------
 document.getElementById('room3-step1-submit').addEventListener('click', () => {
   const sel = [...document.querySelectorAll('.r3:checked')].map(i => i.value);
   const needed = ['1','2','3'];
   const ok = needed.every(n => sel.includes(n)) && sel.length === 3;
-  if (!ok) { failGame(); return; }
+  if (!ok) {
+    showError('room3-step1', 'Incorrect messages selected! Try again.');
+    return;
+  }
   incProgress();
   showPage('room3-step2');
 });
 
-// page2: code SAFE
 document.getElementById('room3-step2-submit').addEventListener('click', () => {
   const v = (document.getElementById('r3code').value || '').trim().toUpperCase();
-  if (v !== 'SAFE') { failGame(); return; }
+  if (v !== 'SAFE') {
+    showError('room3-step2', 'Incorrect code! Try again.');
+    return;
+  }
   incProgress();
   showPage('room4-step1');
 });
 
-/* ---------------- ROOM 4 ---------------- */
-// select positions p1..p4
+// ---------------- ROOM 4 ----------------
 const posSelections = { p1: null, p2: null, p3: null, p4: null };
-document.querySelectorAll('.btn-group[data-for="p1"] .btn-choice').forEach(btn => {
-  btn.addEventListener('click', () => {
-    posSelections.p1 = btn.dataset.val;
-    document.querySelectorAll('.btn-group[data-for="p1"] .btn-choice').forEach(x=>x.classList.remove('active'));
-    btn.classList.add('active');
-  });
-});
-document.querySelectorAll('.btn-group[data-for="p2"] .btn-choice').forEach(btn => {
-  btn.addEventListener('click', () => {
-    posSelections.p2 = btn.dataset.val;
-    document.querySelectorAll('.btn-group[data-for="p2"] .btn-choice').forEach(x=>x.classList.remove('active'));
-    btn.classList.add('active');
-  });
-});
-document.querySelectorAll('.btn-group[data-for="p3"] .btn-choice').forEach(btn => {
-  btn.addEventListener('click', () => {
-    posSelections.p3 = btn.dataset.val;
-    document.querySelectorAll('.btn-group[data-for="p3"] .btn-choice').forEach(x=>x.classList.remove('active'));
-    btn.classList.add('active');
-  });
-});
-document.querySelectorAll('.btn-group[data-for="p4"] .btn-choice').forEach(btn => {
-  btn.addEventListener('click', () => {
-    posSelections.p4 = btn.dataset.val;
-    document.querySelectorAll('.btn-group[data-for="p4"] .btn-choice').forEach(x=>x.classList.remove('active'));
-    btn.classList.add('active');
+['p1','p2','p3','p4'].forEach(key => {
+  document.querySelectorAll(`.btn-group[data-for="${key}"] .btn-choice`).forEach(btn => {
+    btn.addEventListener('click', () => {
+      posSelections[key] = btn.dataset.val;
+      document.querySelectorAll(`.btn-group[data-for="${key}"] .btn-choice`).forEach(x=>x.classList.remove('active'));
+      btn.classList.add('active');
+    });
   });
 });
 
@@ -221,80 +193,30 @@ document.getElementById('room4-step1-submit').addEventListener('click', () => {
     incProgress();
     showPage('room4-step2');
   } else {
-    failGame();
+    showError('room4-step1', 'Incorrect sequence! Try again.');
   }
 });
 
-// page2: final hotline code
 document.getElementById('room4-step2-submit').addEventListener('click', () => {
   const v = (document.getElementById('r4code').value || '').trim();
-  if (v !== '911') { failGame(); return; }
+  if (v !== '911') {
+    showError('room4-step2', 'Incorrect hotline! Try again.');
+    return;
+  }
   incProgress();
   showPage('final');
 });
 
-/* ---------------- FINISH ---------------- */
+// ---------------- FINISH ----------------
 document.getElementById('finishBtn').addEventListener('click', async () => {
-  // finalization: collect info, stop timer, send email
-  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
-
   const name = sessionStorage.getItem('playerName') || 'Unknown';
   const division = sessionStorage.getItem('playerDivision') || '';
   const email = sessionStorage.getItem('playerEmail') || '';
   const reflection = document.getElementById('reflection').value || '';
   const finishTime = new Date().toLocaleString();
-  const spentSeconds = (15 * 60) - timeLeft;
-  const duration = `${Math.floor(spentSeconds/60)}m ${spentSeconds%60}s`;
+  const spentSeconds = Math.max(0, Math.round((timerEnd - Date.now())/1000));
+  const duration = `${Math.floor((15*60-spentSeconds)/60)}m ${(15*60-spentSeconds)%60}s`;
 
-  // Prepare email payload
-  const emailBody = `
-Player: ${name}
-Division: ${division}
-Email: ${Email}
-Finished at: ${finishTime}
-Duration: ${duration}
-Time left: ${formatTime(timeLeft)}
-Reflection:
-${reflection}
-  `;
-
-  // Try EmailJS if configured
-  try {
-    // Replace these placeholders with your EmailJS values
-    const SERVICE_ID = 'service_mqqndw9';
-    const TEMPLATE_ID = 'template_pzaou61';
-    const PUBLIC_KEY = '4uCGVPBz3H1dGhGwQ';
-
-    // If user replaced keys and emailjs is loaded
-    if (window.emailjs && SERVICE_ID !== 'service_mqqndw9' && TEMPLATE_ID !== 'template_pzaou61' && PUBLIC_KEY !== '4uCGVPBz3H1dGhGwQ') {
-      // init if not initialized (safe)
-      try { emailjs.init(PUBLIC_KEY); } catch(e){}
-      // template parameters: adapt in your EmailJS template to use these
-      const templateParams = {
-        player_name: name,
-        player_division: division,
-        player_email: email,
-        finish_time: finishTime,
-        duration: duration,
-        time_left: formatTime(timeLeft),
-        reflection: reflection,
-        to_emails: 'jpfutalan@dswd.gov.ph,amlpineda@dswd.gov.ph'
-      };
-      await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams);
-      alert('Completed — confirmation email sent.');
-    } else {
-      // fallback to mailto (user must send)
-      const subject = encodeURIComponent('Escape Room Completion — ' + name);
-      const body = encodeURIComponent(emailBody);
-      window.open(`mailto:jpfutalan@dswd.gov.ph,amlpineda@dswd.gov.ph?subject=${subject}&body=${body}`, '_blank');
-      alert('No EmailJS configured. A mail compose window was opened so you can send details.');
-    }
-  } catch (err) {
-    console.error('Email error', err);
-    alert('Error sending email — check console and EmailJS config.');
-  }
-
-  // show a simple congratulations overlay on success
   document.querySelectorAll('[data-page]').forEach(s => s.classList.add('hidden'));
   const finalEl = document.querySelector('[data-page="final"]');
   finalEl.classList.remove('hidden');
@@ -304,14 +226,7 @@ ${reflection}
     <div class="flex justify-center"><button class="btn-primary w-48" onclick="location.reload()">Play again</button></div>`;
 });
 
-/* ---------------- initialization ---------------- */
+// ---------------- INIT ----------------
 showPage('start');
 progressBar.style.width = '0%';
 progressText.textContent = `0 / ${TOTAL_STEPS}`;
-
-// failClose button
-document.getElementById('failClose').addEventListener('click', () => {
-  // try to close tab or reload
-  try { attemptClose(); } catch {}
-  location.reload();
-});

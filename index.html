@@ -8,26 +8,24 @@
   <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Optional: EmailJS SDK (only used if you configure keys) -->
+  <!-- Optional: EmailJS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@2/dist/email.min.js"></script>
 
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-black text-white flex items-center justify-center p-6">
   <div class="w-full max-w-4xl">
-    <!-- Header area (timer & progress) -->
+    <!-- Header area -->
     <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
       <div>
         <h1 class="text-3xl md:text-4xl font-extrabold leading-tight">BREAK THE SILENCE</h1>
         <p class="text-sm text-slate-300">VAW Escape Room Challenge</p>
       </div>
-
       <div class="flex items-center gap-6">
         <div class="text-center">
           <div class="text-xs text-slate-400">Time left</div>
           <div id="timer" class="text-2xl font-bold">15:00</div>
         </div>
-
         <div class="w-64">
           <div class="text-xs text-slate-300 text-center mb-1" id="progressText">0 / 8</div>
           <div class="w-full h-3 rounded bg-slate-700 overflow-hidden">
@@ -54,6 +52,9 @@
           <input id="playerDivision" placeholder="Division" class="input px-4 py-3 rounded-lg" />
           <input id="playerEmail" placeholder="Email" class="input px-4 py-3 rounded-lg" />
         </div>
+
+        <!-- ERROR CONTAINER -->
+        <div class="text-red-400 text-sm mb-3 hidden" id="start-error"></div>
 
         <div class="flex justify-center">
           <button id="startBtn" class="btn-primary w-48">Next</button>
@@ -88,6 +89,9 @@
           <label class="option"><input type="checkbox" value="Making her feel unsafe"> Making her feel unsafe</label>
         </div>
 
+        <!-- ERROR CONTAINER -->
+        <div class="text-red-400 text-sm mb-3 hidden" id="room1-step1-error"></div>
+
         <div class="flex justify-center">
           <button id="room1-step1-submit" class="btn-primary w-48">Submit</button>
         </div>
@@ -100,17 +104,21 @@
 
         <input id="r1code" class="input mb-4" placeholder="Type the unlock code" />
 
+        <!-- ERROR CONTAINER -->
+        <div class="text-red-400 text-sm mb-3 hidden" id="room1-step2-error"></div>
+
         <div class="flex justify-center">
           <button id="room1-step2-submit" class="btn-primary w-48">Submit</button>
         </div>
       </section>
 
-      <!-- ROOM2 - PAGE1 (matching via button groups, not ugly dropdowns) -->
+      <!-- ROOM2 - PAGE1 -->
       <section data-page="room2-step1" class="page hidden">
         <h2 class="text-2xl font-bold mb-3">ROOM 2 — The Torn Legal Scroll (1/2)</h2>
         <p class="text-slate-300 mb-3">Match each torn paper description to the law. (Choose one law for each torn paper.)</p>
 
         <div class="grid md:grid-cols-3 gap-4 mb-4">
+          <!-- Torn Paper A -->
           <div class="card">
             <div class="text-sm font-semibold mb-2">Torn Paper A</div>
             <div class="text-slate-300 italic mb-2">"I control her finances — I deny access to freedom."</div>
@@ -120,7 +128,7 @@
               <button class="btn-choice" data-val="Anti-Trafficking">Anti-Trafficking</button>
             </div>
           </div>
-
+          <!-- Torn Paper B -->
           <div class="card">
             <div class="text-sm font-semibold mb-2">Torn Paper B</div>
             <div class="text-slate-300 italic mb-2">"It’s the harassment and the looks."</div>
@@ -130,7 +138,7 @@
               <button class="btn-choice" data-val="Anti-Trafficking">Anti-Trafficking</button>
             </div>
           </div>
-
+          <!-- Torn Paper C -->
           <div class="card">
             <div class="text-sm font-semibold mb-2">Torn Paper C</div>
             <div class="text-slate-300 italic mb-2">"This is Trafficking in Persons."</div>
@@ -142,24 +150,29 @@
           </div>
         </div>
 
+        <!-- ERROR CONTAINER -->
+        <div class="text-red-400 text-sm mb-3 hidden" id="room2-step1-error"></div>
+
         <div class="flex justify-center">
           <button id="room2-step1-submit" class="btn-primary w-48">Submit</button>
         </div>
       </section>
 
-      <!-- ROOM2 - PAGE2 (short code) -->
+      <!-- ROOM2 - PAGE2 -->
       <section data-page="room2-step2" class="page hidden">
         <h2 class="text-2xl font-bold mb-3">ROOM 2 — The Torn Legal Scroll (2/2)</h2>
         <p class="text-slate-300 mb-3">Type the 4-letter acronym combining these laws:</p>
-
         <input id="r2code" class="input mb-4" placeholder="e.g. BAC" />
+
+        <!-- ERROR CONTAINER -->
+        <div class="text-red-400 text-sm mb-3 hidden" id="room2-step2-error"></div>
 
         <div class="flex justify-center">
           <button id="room2-step2-submit" class="btn-primary w-48">Submit</button>
         </div>
       </section>
 
-      <!-- ROOM3 - PAGE1 (checkboxes for messages) -->
+      <!-- ROOM3 - PAGE1 -->
       <section data-page="room3-step1" class="page hidden">
         <h2 class="text-2xl font-bold mb-3">ROOM 3 — The Glitching Messages (1/2)</h2>
         <p class="text-slate-300 mb-3">Identify the HARASSING messages. (Select the dangerous messages.)</p>
@@ -171,29 +184,34 @@
           <label class="option"><input type="checkbox" value="4" class="r3"> Message 4: "Good morning, Lun$!"</label>
         </div>
 
+        <!-- ERROR CONTAINER -->
+        <div class="text-red-400 text-sm mb-3 hidden" id="room3-step1-error"></div>
+
         <div class="flex justify-center">
           <button id="room3-step1-submit" class="btn-primary w-48">Submit</button>
         </div>
       </section>
 
-      <!-- ROOM3 - PAGE2 (enter 4-letter hidden word) -->
+      <!-- ROOM3 - PAGE2 -->
       <section data-page="room3-step2" class="page hidden">
         <h2 class="text-2xl font-bold mb-3">ROOM 3 — The Glitching Messages (2/2)</h2>
         <p class="text-slate-300 mb-3">Take the missing letter of each harassing message (in order). It forms a meaningful 4-letter word.</p>
-
         <input id="r3code" class="input mb-4" placeholder="Enter 4-letter word" />
+
+        <!-- ERROR CONTAINER -->
+        <div class="text-red-400 text-sm mb-3 hidden" id="room3-step2-error"></div>
 
         <div class="flex justify-center">
           <button id="room3-step2-submit" class="btn-primary w-48">Submit</button>
         </div>
       </section>
 
-      <!-- ROOM4 - PAGE1 (sequence) -->
+      <!-- ROOM4 - PAGE1 -->
       <section data-page="room4-step1" class="page hidden">
         <h2 class="text-2xl font-bold mb-3">ROOM 4 — The Scrambled Map (1/2)</h2>
         <p class="text-slate-300 mb-3">Follow the path N → E → S → W. Choose the step for each position.</p>
-
         <div class="grid md:grid-cols-2 gap-3 mb-4">
+          <!-- Positions p1 - p4 -->
           <div class="card">
             <div class="text-sm font-semibold mb-2">Position 1 (N)</div>
             <div class="btn-group" data-for="p1">
@@ -203,7 +221,6 @@
               <button class="btn-choice" data-val="Social Worker">Social Worker</button>
             </div>
           </div>
-
           <div class="card">
             <div class="text-sm font-semibold mb-2">Position 2 (E)</div>
             <div class="btn-group" data-for="p2">
@@ -213,7 +230,6 @@
               <button class="btn-choice" data-val="Social Worker">Social Worker</button>
             </div>
           </div>
-
           <div class="card">
             <div class="text-sm font-semibold mb-2">Position 3 (S)</div>
             <div class="btn-group" data-for="p3">
@@ -223,7 +239,6 @@
               <button class="btn-choice" data-val="Social Worker">Social Worker</button>
             </div>
           </div>
-
           <div class="card">
             <div class="text-sm font-semibold mb-2">Position 4 (W)</div>
             <div class="btn-group" data-for="p4">
@@ -235,17 +250,22 @@
           </div>
         </div>
 
+        <!-- ERROR CONTAINER -->
+        <div class="text-red-400 text-sm mb-3 hidden" id="room4-step1-error"></div>
+
         <div class="flex justify-center">
           <button id="room4-step1-submit" class="btn-primary w-48">Submit</button>
         </div>
       </section>
 
-      <!-- ROOM4 - PAGE2 (final hotline) -->
+      <!-- ROOM4 - PAGE2 -->
       <section data-page="room4-step2" class="page hidden">
         <h2 class="text-2xl font-bold mb-3">ROOM 4 — The Scrambled Map (2/2)</h2>
         <p class="text-slate-300 mb-3">Enter the hotline you need to find help.</p>
-
         <input id="r4code" class="input mb-4" placeholder="e.g. 911" />
+
+        <!-- ERROR CONTAINER -->
+        <div class="text-red-400 text-sm mb-3 hidden" id="room4-step2-error"></div>
 
         <div class="flex justify-center">
           <button id="room4-step2-submit" class="btn-primary w-48">Submit</button>
@@ -259,6 +279,9 @@
 
         <label class="text-sm text-slate-300">Optional - What is one way you can help end VAW in your community?</label>
         <textarea id="reflection" class="input h-28 mb-4" placeholder="(Optional) Write your reflection..."></textarea>
+
+        <!-- ERROR CONTAINER -->
+        <div class="text-red-400 text-sm mb-3 hidden" id="final-error"></div>
 
         <div class="flex justify-center">
           <button id="finishBtn" class="btn-primary w-48">Finish & Submit</button>
