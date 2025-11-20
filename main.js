@@ -1,4 +1,10 @@
-// script.js (module)
+// main.js (module)
+
+// --- EmailJS Init ---
+import emailjs from 'https://cdn.jsdelivr.net/npm/emailjs-com@2/dist/email.min.js';
+emailjs.init("4uCGVPBz3H1dGhGwQ"); // your public key
+
+// --- Pages & Progress ---
 const PAGES = [
   'start',
   'room1-step1','room1-step2',
@@ -10,7 +16,7 @@ const PAGES = [
 
 let currentIndex = 0;
 let completedSteps = 0;
-const TOTAL_STEPS = 8; // 4 rooms * 2 pages
+const TOTAL_STEPS = 8; // 4 rooms * 2 steps
 const progressBar = document.getElementById('progressBar');
 const progressText = document.getElementById('progressText');
 
@@ -21,7 +27,6 @@ function showPage(name) {
   currentIndex = PAGES.indexOf(name);
 }
 
-// increment progress bar
 function incProgress() {
   completedSteps = Math.min(TOTAL_STEPS, completedSteps + 1);
   const pct = Math.round((completedSteps / TOTAL_STEPS) * 100);
@@ -29,7 +34,7 @@ function incProgress() {
   progressText.textContent = `${completedSteps} / ${TOTAL_STEPS}`;
 }
 
-// Timer
+// --- Timer ---
 let timerEnd = null;
 const timerEl = document.getElementById('timer');
 timerEl.textContent = "15:00";
@@ -57,7 +62,7 @@ function startTimer() {
   requestAnimationFrame(tick);
 }
 
-// Show inline error message
+// --- Show error ---
 function showError(containerId, message) {
   const el = document.getElementById(containerId + '-error');
   if (!el) return;
@@ -66,7 +71,7 @@ function showError(containerId, message) {
   setTimeout(() => el.classList.add('hidden'), 3000);
 }
 
-// Fail game when time runs out
+// --- Fail game ---
 function failGame() {
   document.querySelectorAll('[data-page]').forEach(s => s.classList.add('hidden'));
   document.querySelector('[data-page="fail"]').classList.remove('hidden');
@@ -98,8 +103,7 @@ document.getElementById('room1-step1-submit').addEventListener('click', () => {
     "Controlling behaviors",
     "Making her feel unsafe"
   ];
-  const allIncluded = required.every(r => chosen.includes(r));
-  if (!allIncluded) {
+  if (!required.every(r => chosen.includes(r))) {
     showError('room1-step1', 'Incorrect selection! Try again.');
     return;
   }
@@ -150,12 +154,11 @@ document.getElementById('room2-step2-submit').addEventListener('click', () => {
   showPage('room3');
 });
 
-// ---------------- ROOM 3 (combined) ----------------
+// ---------------- ROOM 3 ----------------
 document.getElementById('room3-submit').addEventListener('click', () => {
   const sel = [...document.querySelectorAll('.r3:checked')].map(i => i.value);
-  const needed = ['1','2','3']; // correct messages
+  const needed = ['1','2','3'];
   const allSelectedCorrect = needed.every(n => sel.includes(n)) && sel.length === 3;
-
   const code = (document.getElementById('r3code').value || '').trim().toUpperCase();
   const correctCode = 'SAFE';
 
@@ -168,9 +171,8 @@ document.getElementById('room3-submit').addEventListener('click', () => {
     return;
   }
 
-  // If both correct
-  incProgress(); // Step for message selection
-  incProgress(); // Step for code
+  incProgress(); // selection
+  incProgress(); // code
   showPage('room4-step1');
 });
 
@@ -218,11 +220,11 @@ document.getElementById('finishBtn').addEventListener('click', async () => {
   const spentSeconds = Math.max(0, Math.round((timerEnd - Date.now())/1000));
   const duration = `${Math.floor((15*60-spentSeconds)/60)}m ${(15*60-spentSeconds)%60}s`;
 
-  // --- EmailJS send ---
+  // --- Send Email ---
   try {
     await emailjs.send(
-      'service_mqqndw9',      // replace with your service ID
-      'template_pzaou61',     // replace with your template ID
+      'service_mqqndw9',      // your service ID
+      'template_pzaou61',     // your template ID
       {
         player_name: name,
         player_division: division,
@@ -230,8 +232,7 @@ document.getElementById('finishBtn').addEventListener('click', async () => {
         reflection: reflection,
         duration: duration,
         finished_at: finishTime
-      },
-      '4uCGVPBz3H1dGhGwQ'       // replace with your EmailJS public key
+      }
     );
     console.log('Email sent successfully!');
   } catch(err) {
