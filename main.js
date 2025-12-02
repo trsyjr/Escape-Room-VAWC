@@ -49,7 +49,7 @@ function formatTime(sec){
 function startTimer(){
   if(timerEnd) return;
   timerEnd = Date.now() + 15*60*1000;
-  const tick = ()=>{
+  const tick = ()=> {
     const remaining = Math.round((timerEnd - Date.now())/1000);
     if(remaining<=0){ timerEl.textContent='00:00'; failGame(); return; }
     timerEl.textContent = formatTime(remaining);
@@ -136,7 +136,7 @@ document.getElementById('room4-step2-submit')?.addEventListener('click',()=>{
 
 // --- SEND TO GOOGLE SHEETS ---
 async function sendToGSheet(data){
-  const url = "https://script.google.com/a/macros/dswd.gov.ph/s/AKfycbwi8vRAOlYHx5J2rDKD7KgNmiuuGxFqOoTCXZp1x8hc4PZ_zkx06yHLTjaN-ts1bV_t/exec";  // <-- Replace with Apps Script Web App URL
+  const url = "https://script.google.com/a/macros/dswd.gov.ph/s/AKfycbwi8vRAOlYHx5J2rDKD7KgNmiuuGxFqOoTCXZp1x8hc4PZ_zkx06yHLTjaN-ts1bV_t/exec";  // <-- Replace with your Web App URL
 
   await fetch(url, {
     method: "POST",
@@ -163,7 +163,15 @@ document.getElementById('finishBtn')?.addEventListener('click',()=>{
   localStorage.setItem('escapeRoomFinished',JSON.stringify(finished));
 
   // SEND TO GOOGLE SHEET
-  sendToGSheet({ name, office, email, reflection, duration, finishedAt });
+  sendToGSheet({
+  type: "formSubmit",
+  name,
+  office,
+  email,
+  reflection,
+  duration,
+  finishedAt
+});
 
   // Show final screen
   const finalEl = document.querySelector('[data-page="final"]');
