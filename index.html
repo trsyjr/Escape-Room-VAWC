@@ -14,7 +14,44 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-black text-white flex items-center justify-center p-6">
-  <div class="w-full max-w-4xl">
+
+  <!-- Intro Popup Modal -->
+<div id="introModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+  <div class="relative w-full max-w-6xl h-[80vh] rounded-3xl overflow-hidden shadow-2xl" 
+       style="background-image: url('Assets/BG.jpg'); background-size: cover; background-position: center;">
+    <!-- Overlay with padding at top to push content down -->
+    <div class="bg-black/50 p-8 pt-[10rem] text-white text-justify h-full overflow-y-auto">
+      <h2 class="text-4xl font-bold mb-6 text-center">BREAK THE SILENCE</h2>
+      <p class="mb-4">
+        As part of the <strong>18-Day Campaign to End Violence Against Women</strong>, you are invited to enter a unique challenge: <strong>“Break the Silence: VAW Escape Room.”</strong>
+      </p>
+      <p class="mb-4">
+        In this interactive experience, you will help Luna, a woman facing unseen threats, find her path to safety. Her story has been scrambled — her words hidden in <strong>numbers and ciphers</strong>. Only by decoding them can you uncover the signs of abuse, understand the laws that protect her, and guide her to help.
+      </p>
+      <p class="mb-4">
+        <strong>Why 18 days?</strong> The 18-Day Campaign is a national movement to raise awareness, educate communities, and empower individuals to take action against VAW. Each day represents a step toward breaking the silence and building safer spaces for women.
+      </p>
+      <p class="mb-4">
+        <strong>Your mission:</strong>
+      </p>
+      <ul class="list-disc list-inside mb-4">
+        <li>Solve puzzles and decrypt messages.</li>
+        <li>Identify red flags and unsafe situations.</li>
+        <li>Discover the legal and social support systems available.</li>
+        <li>Complete all four rooms to help Luna find safety and amplify her voice.</li>
+      </ul>
+      <p>
+        Remember: <strong>silence protects the abuser, but action saves lives.</strong> When you are ready, begin the cipher and start your journey to become a <strong>VAW Advocate.</strong>
+      </p>
+      <div class="flex justify-center mt-6">
+        <button id="closeModal" class="btn-primary px-8 py-3 text-lg">Continue</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    <div class="w-full max-w-4xl">
     <!-- Header area -->
     <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
       <div>
@@ -39,7 +76,7 @@
     <main id="gameCard" class="bg-gradient-to-br from-slate-800/60 to-slate-900/60 backdrop-blur-md border border-slate-700 rounded-2xl p-8 shadow-2xl">
 
       <!-- START / INFO page -->
-      <section data-page="start" class="page">
+      <section data-page="start" class="page hidden">
         <h2 class="text-2xl font-bold mb-2">Welcome</h2>
         <p class="text-slate-300 mb-4">
           Welcome to the Break the Silence: VAW Escape Room Challenge — an advocacy-based puzzle adventure.

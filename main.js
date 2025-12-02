@@ -192,3 +192,18 @@ document.getElementById('failClose')?.addEventListener('click',()=>location.relo
 showPage('start');
 progressBar.style.width='0%';
 progressText.textContent=`0 / ${TOTAL_STEPS}`;
+
+document.addEventListener("DOMContentLoaded", () => {
+  const modal = document.getElementById("introModal");
+  const closeModalBtn = document.getElementById("closeModal");
+  const startPage = document.querySelector('[data-page="start"]');
+
+  // Start page stays hidden until modal is closed
+  closeModalBtn.addEventListener("click", () => {
+    // Hide the modal
+    modal.classList.add("hidden");
+
+    // Show the start page
+    startPage.classList.remove("hidden");
+  });
+});
