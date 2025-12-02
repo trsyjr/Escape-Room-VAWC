@@ -134,20 +134,38 @@ document.getElementById('room4-step2-submit')?.addEventListener('click',()=>{
   incProgress(); showPage('final');
 });
 
+// --- SEND TO GOOGLE SHEETS ---
+async function sendToGSheet(data){
+  const url = "https://script.google.com/a/macros/dswd.gov.ph/s/AKfycbwi8vRAOlYHx5J2rDKD7KgNmiuuGxFqOoTCXZp1x8hc4PZ_zkx06yHLTjaN-ts1bV_t/exec";  // <-- Replace with Apps Script Web App URL
+
+  await fetch(url, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
+}
+
 // --- FINISH ---
 document.getElementById('finishBtn')?.addEventListener('click',()=>{
   const name = sessionStorage.getItem('playerName')||'Unknown';
   const office = sessionStorage.getItem('playerOffice')||'';
   const email = sessionStorage.getItem('playerEmail')||'';
   const reflection = document.getElementById('reflection')?.value||'';
+
   const spentSec = Math.max(0,Math.round((timerEnd-Date.now())/1000));
   const duration = `${Math.floor((15*60-spentSec)/60)}m ${(15*60-spentSec)%60}s`;
+  const finishedAt = new Date().toLocaleString();
 
-  // Record finish in localStorage
+  // Local save
   const finished = JSON.parse(localStorage.getItem('escapeRoomFinished')||'[]');
-  finished.push({name,office,email,reflection,duration,finishedAt:new Date().toLocaleString()});
+  finished.push({name,office,email,reflection,duration,finishedAt});
   localStorage.setItem('escapeRoomFinished',JSON.stringify(finished));
 
+  // SEND TO GOOGLE SHEET
+  sendToGSheet({ name, office, email, reflection, duration, finishedAt });
+
+  // Show final screen
   const finalEl = document.querySelector('[data-page="final"]');
   document.querySelectorAll('[data-page]').forEach(p=>p.classList.add('hidden'));
   finalEl.classList.remove('hidden');
