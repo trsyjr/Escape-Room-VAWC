@@ -207,3 +207,9 @@ document.addEventListener("DOMContentLoaded", () => {
     startPage.classList.remove("hidden");
   });
 });
+
+// CLOSE TAB BUTTON
+document.getElementById("closeGameBtn")?.addEventListener("click", () => {
+  window.open('', '_self'); 
+  window.close();
+});
