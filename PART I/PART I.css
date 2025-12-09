@@ -1,0 +1,78 @@
+/* style.css - no @apply; uses Tailwind classes and a few custom rules */
+
+/* Inputs / cards */
+.input {
+  background: #0f1724; /* slate-900 like */
+  border: 1px solid rgba(255,255,255,0.04);
+  color: #fff;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg,#06b6d4,#7c3aed);
+  color: black;
+  padding: 0.7rem 1rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  box-shadow: 0 6px 18px rgba(124,58,237,0.18);
+  transition: transform .12s ease, filter .12s ease;
+}
+.btn-primary:hover { transform: translateY(-3px); filter: brightness(.98); }
+
+.btn-secondary {
+  background: rgba(255,255,255,0.04);
+  color: #fff;
+  padding: 0.7rem 1rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+}
+
+.option {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 0.7rem 1rem;
+  background: rgba(255,255,255,0.02);
+  border-radius: 0.75rem;
+  cursor: pointer;
+}
+.option input { width: 18px; height: 18px; }
+
+/* Card styling */
+.card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.03);
+  padding: 1rem;
+  border-radius: 0.75rem;
+}
+
+/* Button groups (matching) */
+.btn-group { display:flex; flex-direction:column; gap:8px; }
+.btn-choice {
+  background: rgba(255,255,255,0.03);
+  color: #e6eef6;
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.5rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: background .12s, transform .08s;
+}
+.btn-choice:hover { background: rgba(255,255,255,0.05); transform: translateY(-2px); }
+.btn-choice.active {
+  background: linear-gradient(90deg,#06b6d4,#7c3aed);
+  color: #000;
+  border-color: rgba(0,0,0,0.2);
+}
+
+/* Page visibility handled by .hidden class from Tailwind; just style .page layout */
+.page { min-height: 220px; }
+@media (min-width: 768px) {
+  .page { min-height: 300px; }
+}
+
+/* Small helper */
+.text-slate-300 { color: #cbd5e1; }
