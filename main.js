@@ -125,10 +125,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Room submissions
   room1Step1Submit?.addEventListener('click', () => {
-    const selected = document.querySelector('input[name="r1"]:checked')?.value || '';
-    if(selected.toLowerCase() !== 'emotional abuse') { showError('room1-step1','Incorrect answer'); return; }
-    incProgress(); showPage('room1-step2');
-  });
+  const answer = $('room1-answer')?.value.trim().toLowerCase() || '';
+
+  if(answer !== 'emotional abuse') {
+    showError('room1-step1','Incorrect answer');
+    return;
+  }
+
+  incProgress();
+  showPage('room1-step2');
+});
 
   room1Step2Submit?.addEventListener('click', () => {
     if(r1code?.value.trim().toUpperCase() !== "EMOTION"){ showError('room1-step2','Incorrect code'); return; }
@@ -185,57 +191,55 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch(err){ console.warn("Google Sheets error:", err); }
   }
 
-  finishBtn?.addEventListener('click', () => {
-    stopTimer(); // Stop the timer when finishing
-    const name = sessionStorage.getItem('playerName') || '';
-    const office = sessionStorage.getItem('playerOffice') || '';
-    const email = sessionStorage.getItem('playerEmail') || '';
-    const reflectionText = $('reflection')?.value.trim() || '';
+finishBtn?.addEventListener('click', () => {
+  stopTimer(); // Stop the timer when finishing
+  const name = sessionStorage.getItem('playerName') || '';
+  const office = sessionStorage.getItem('playerOffice') || '';
+  const email = sessionStorage.getItem('playerEmail') || '';
+  const reflectionText = $('reflection')?.value.trim() || '';
 
-    // Calculate duration
-    const endTime = Date.now();
-    const durationSec = startTime ? Math.round((endTime - startTime)/1000) : 0;
-    const minutes = Math.floor(durationSec / 60);
-    const seconds = durationSec % 60;
-    const durationText = `${minutes}m ${seconds}s`;
+  const endTime = Date.now();
+  const durationSec = startTime ? Math.round((endTime - startTime)/1000) : 0;
+  const minutes = Math.floor(durationSec / 60);
+  const seconds = durationSec % 60;
+  const durationText = `${minutes}m ${seconds}s`;
 
-    // Send to Google Sheets
-    sendToGSheet({
-      name,
-      office,
-      email,
-      reflection: reflectionText,
-      duration: durationText,
-      finishedAt: new Date().toLocaleString()
-    });
-
-    // Show enhanced congratulations page
-    showPage('final');
-    const finalPage = document.querySelector('[data-page="final"]');
-    if(finalPage) finalPage.innerHTML = `
-      <div class="flex flex-col items-center justify-center text-center p-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-3xl shadow-2xl animate__animated animate__fadeIn">
-        <h2 class="text-6xl font-extrabold text-white mb-6 animate__pulse animate__infinite">CONGRATULATIONS!</h2>
-        <p class="text-white text-2xl mb-4">You successfully completed Escape Room PART II!</p>
-        <p class="text-white text-xl font-semibold mb-6">Time Taken: <span class="underline">${durationText}</span></p>
-        <button id="finishClose" class="mt-6 px-10 py-4 text-lg font-bold rounded-xl shadow-lg bg-yellow-400 text-black hover:bg-yellow-300 transition">Close</button>
-      </div>
-    `;
-
-    // Confetti continuously
-    const confettiInterval = setInterval(() => {
-      confetti({
-        particleCount: 250,
-        spread: 160,
-        origin: { y: 0.6 },
-        colors: ['#ff0a54', '#ff477e', '#ff7096', '#ff85a1', '#fbb1b9', '#f9bec7']
-      });
-    }, 500);
-
-    $('finishClose')?.addEventListener('click', () => {
-      clearInterval(confettiInterval); // stop confetti
-      window.location.reload();
-    });
+  sendToGSheet({
+    name,
+    office,
+    email,
+    reflection: reflectionText,
+    duration: durationText,
+    finishedAt: new Date().toLocaleString()
   });
+
+  showPage('final');
+  const finalPage = document.querySelector('[data-page="final"]');
+  if(finalPage) finalPage.innerHTML = `
+    <div class="flex flex-col items-center justify-center text-center p-6 md:p-12 bg-gradient-to-r from-green-400 to-blue-500 rounded-3xl shadow-2xl animate__animated animate__fadeIn max-w-3xl mx-auto">
+      <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 animate__pulse animate__infinite">CONGRATULATIONS!</h2>
+      <p class="text-white text-lg md:text-2xl mb-4">You successfully completed Escape Room PART II!</p>
+      <p class="text-white text-base md:text-xl font-semibold mb-6">Time Taken: <span class="underline">${durationText}</span></p>
+      <button id="finishClose" class="mt-4 md:mt-6 px-6 md:px-10 py-3 md:py-4 text-base md:text-lg font-bold rounded-xl shadow-lg bg-yellow-400 text-black hover:bg-yellow-300 transition">Close</button>
+    </div>
+  `;
+
+  // Confetti continuously
+  const confettiInterval = setInterval(() => {
+    confetti({
+      particleCount: 250,
+      spread: 160,
+      origin: { y: 0.6 },
+      colors: ['#ff0a54', '#ff477e', '#ff7096', '#ff85a1', '#fbb1b9', '#f9bec7']
+    });
+  }, 500);
+
+  $('finishClose')?.addEventListener('click', () => {
+    clearInterval(confettiInterval);
+    window.location.reload();
+  });
+});
+
 
   // Intro modal
   const introModalBtn = $('closeModal');
